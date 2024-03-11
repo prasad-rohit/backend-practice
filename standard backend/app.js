@@ -1,22 +1,20 @@
+const path = require("path")
 const express = require("express")
 const dotenv = require("dotenv")
-const path = require("path")
-const authRoute = require("./routes/authRoute")
+const router = require("./routes/index")
+const bodyParser = require('body-parser');
 const sqlConnection = require("./config/db/sql")
-
-dotenv.config({ path: path.resolve(__dirname, 'config', `.env.${process.env.NODE_ENV}`) })
-sqlConnection.connect((err) => {
-    if(err){
-        console.log("Error connecting sql database ", err)
-        return
-    }
-
-    console.log("Db connected at ", sqlConnection.threadId)
-})
+const mongoConnection = require("./config/db/mongodb")
 
 const app = express();
 
-app.use("/", authRoute)
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
+app.use(router)
+
+dotenv.config({ path: path.resolve(__dirname, 'config', `.env.${process.env.NODE_ENV}`) })
+mongoConnection()
+sqlConnection()
 
 const port = process.env.PORT;
 app.listen(port, () => {
