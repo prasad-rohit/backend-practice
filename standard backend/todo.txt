@@ -1,1 +1,4 @@
 > Add validations middleware
+> Make fetch call for an array of memberlogins or ids
+> Set up env variables
+> Actually use the status code which is being sent from the dao layers

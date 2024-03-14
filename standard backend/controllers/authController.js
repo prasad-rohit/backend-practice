@@ -1,4 +1,4 @@
-const { getUser, createUser } = require("../db/dao/userDao")
+const { getUserDB, createUserDB } = require("../db/dao/userDao")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
@@ -9,14 +9,14 @@ async function signUpController(req, res){
         password,
         email
     }
-    const user = await createUser(userData)
+    const user = await createUserDB(userData)
     res.status(user[1]).send(user[0])
 }
 
 async function loginController(req, res){
     const { username, password } = req.body.data;
     
-    const user = await getUser(username)
+    const user = await getUserDB(username)
     if(user[1] === 500){
         res.status(404).json({error : "No user found"})
     }
@@ -25,7 +25,7 @@ async function loginController(req, res){
         res.status(401).json({error : "Either username or password is wrong"})
     }
     
-    const token = jwt.sign({userId: user.id}, "secret", {expiresIn: '1h'})
+    const token = jwt.sign({userId: user[0].user_id}, "secret", {expiresIn: '1h'})
     res.status(user[1]).send({token})
 }
 

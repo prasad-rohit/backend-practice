@@ -1,7 +1,8 @@
 const User = require("../models/userModel")
 const bcrypt = require("bcrypt")
+const { v4: uuidv4 } = require('uuid')
 
-async function getUser(username){
+async function getUserDB(username){
     try {
         const user = await User.findOne({ where: { username: username } })
         
@@ -12,11 +13,12 @@ async function getUser(username){
     }
 }
 
-async function createUser(userData){
+async function createUserDB(userData){
     const { username, password, email } = userData
     try{
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
+            uid: uuidv4().replace(/-/g, '').substring(0, 20),
             username,
             password: hashedPassword,
             email
@@ -28,4 +30,4 @@ async function createUser(userData){
     }
 }
 
-module.exports = {getUser, createUser}
+module.exports = {getUserDB, createUserDB}
